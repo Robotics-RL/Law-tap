@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+<meta name="description" content="LawTap | مكتب المحامي ليث خصاونة للاستشارات القانونية في الأردن. استشارات قانونية احترافية في القضايا المدنية، التجارية، والعقود. احجز استشارتك الآن.">
+<meta name="keywords" content="محامي, ليث خصاونة, استشارات قانونية, محامي الأردن, قانون, محامي عمان, عقود, قضايا, استشارة قانونية">
+<meta name="author" content="المحامي ليث خصاونة">
+<meta name="robots" content="index, follow">
+
+<!-- روابط السوشال (Open Graph) -->
+<meta property="og:title" content="LawTap | المحامي ليث خصاونة">
+<meta property="og:description" content="استشارتك القانونية تبدأ من هنا مع المحامي ليث خصاونة. احجز الآن عبر LawTap.">
+<meta property="og:image" content="https://lawtap.com/logo.jpeg"> <!-- غيّرها حسب رابط الشعار بعد الرفع -->
+<meta property="og:url" content="https://lawtap.com">
+<meta property="og:type" content="website">
+
+<!-- Google -->
+<meta itemprop="name" content="LawTap | المحامي ليث خصاونة">
+<meta itemprop="description" content="مكتب المحامي ليث خصاونة يقدم استشارات قانونية احترافية.">
+<meta itemprop="image" content="https://lawtap.com/logo.jpeg">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حجز استشارة - LawTap</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <section class="booking-page">
+    <div class="booking-header">
+      <h1>احجز استشارتك القانونية الآن</h1>
+      <p>املأ البيانات التالية لتأكيد موعدك مع المحامي <strong>ليث خصاونة</strong> بكل سهولة وسرية تامة.</p>
+    </div>
+
+    <div class="booking-form-container">
+      <form id="bookingForm" action="send_booking.php" method="POST">
+        <label>الاسم الكامل:</label>
+        <input type="text" name="name" required>
+
+        <label>رقم الهاتف:</label>
+        <input type="tel" name="phone" required>
+
+        <label>البريد الإلكتروني:</label>
+        <input type="email" name="email" required>
+
+        <label>اختر الباقة:</label>
+        <select name="package" required>
+          <option value="">اختر الباقة</option>
+          <option value="استشارة أساسية (30 دقيقة)">استشارة أساسية (30 دقيقة)</option>
+          <option value="استشارة شاملة (60 دقيقة)">استشارة شاملة (60 دقيقة)</option>
+          <option value="استشارة مميزة (90 دقيقة)">استشارة مميزة (90 دقيقة)</option>
+        </select>
+
+        <label>طريقة اللقاء المفضلة:</label>
+        <select name="meeting_method" required>
+          <option value="">اختر طريقة اللقاء</option>
+          <option value="Microsoft Teams">Microsoft Teams</option>
+          <option value="Zoom">Zoom</option>
+        </select>
+
+        <label>التاريخ والوقت المفضل:</label>
+        <input type="datetime-local" name="datetime" required>
+
+        <label>ملاحظات إضافية (اختياري):</label>
+        <textarea name="message" rows="4" placeholder="اكتب أي تفاصيل إضافية..."></textarea>
+
+        <button type="submit" class="btn">إرسال الطلب</button>
+      </form>
+
+      <p id="responseMessage"></p>
+    </div>
+  </section>
+
+  <script>
+  // التقاط اسم الباقة من الرابط وملؤها تلقائياً
+  const params = new URLSearchParams(window.location.search);
+  const selectedPackage = params.get('package');
+  if (selectedPackage) {
+    const selectElement = document.querySelector('select[name="package"]');
+    if (selectElement) selectElement.value = selectedPackage;
+  }
+  const form = document.getElementById('bookingForm');
+  const responseMessage = document.getElementById('responseMessage');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const meetingMethod = formData.get('meeting_method');
+    const response = await fetch('send_booking.php', { method: 'POST', body: formData });
+    const result = await response.text();
+
+    responseMessage.innerHTML = result;
+
+    // ✅ إظهار زر الواتساب فقط إذا كانت الطريقة "Chat عبر الموقع"
+    if (meetingMethod === "Chat عبر الموقع") {
+      const whatsappDiv = document.createElement("div");
+      whatsappDiv.innerHTML = `
+        <a href="https://wa.me/962775415550X?text=مرحباً، أود المتابعة في المحادثة عبر الموقع." 
+           class="whatsapp-chat" target="_blank" title="تواصل عبر WhatsApp">
+           <i class="fab fa-whatsapp"></i>
+        </a>
+      `;
+      document.body.appendChild(whatsappDiv);
+    }
+
+    form.reset();
+  });
+</script>
+
+<style>
+.whatsapp-chat {
+  position: fixed;
+  bottom: 25px;
+  left: 25px;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: white;
+  font-size: 28px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  text-decoration: none;
+  z-index: 999;
+  transition: 0.3s ease;
+}
+
+.whatsapp-chat:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(37, 211, 102, 0.6);
+}
+</style>
+
+</script>
+</body>
+</html>
