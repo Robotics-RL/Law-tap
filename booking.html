@@ -1,31 +1,20 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-
-<meta name="description" content="LawTap | مكتب المحامي ليث خصاونة للاستشارات القانونية في الأردن. استشارات قانونية احترافية في القضايا المدنية، التجارية، والعقود. احجز استشارتك الآن.">
-<meta name="keywords" content="محامي, ليث خصاونة, استشارات قانونية, محامي الأردن, قانون, محامي عمان, عقود, قضايا, استشارة قانونية">
-<meta name="author" content="المحامي ليث خصاونة">
-<meta name="robots" content="index, follow">
-
-<!-- روابط السوشال (Open Graph) -->
-<meta property="og:title" content="LawTap | المحامي ليث خصاونة">
-<meta property="og:description" content="استشارتك القانونية تبدأ من هنا مع المحامي ليث خصاونة. احجز الآن عبر LawTap.">
-<meta property="og:image" content="https://lawtap.com/logo.jpeg"> <!-- غيّرها حسب رابط الشعار بعد الرفع -->
-<meta property="og:url" content="https://lawtap.com">
-<meta property="og:type" content="website">
-
-<!-- Google -->
-<meta itemprop="name" content="LawTap | المحامي ليث خصاونة">
-<meta itemprop="description" content="مكتب المحامي ليث خصاونة يقدم استشارات قانونية احترافية.">
-<meta itemprop="image" content="https://lawtap.com/logo.jpeg">
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>حجز استشارة - LawTap</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- تحسينات SEO -->
+  <meta name="description" content="LawTap | مكتب المحامي ليث خصاونة للاستشارات القانونية في الأردن. استشارات قانونية احترافية في القضايا المدنية، التجارية، والعقود. احجز استشارتك الآن.">
+  <meta name="keywords" content="محامي, ليث خصاونة, استشارات قانونية, محامي الأردن, قانون, محامي عمان, عقود, قضايا, استشارة قانونية">
+  <meta name="author" content="المحامي ليث خصاونة">
+  <meta name="robots" content="index, follow">
 </head>
+
 <body>
   <section class="booking-page">
     <div class="booking-header">
@@ -34,7 +23,7 @@
     </div>
 
     <div class="booking-form-container">
-      <form id="bookingForm" action="send_booking.php" method="POST">
+      <form id="bookingForm" action="https://formspree.io/f/myznoqvo" method="POST">
         <label>الاسم الكامل:</label>
         <input type="text" name="name" required>
 
@@ -53,10 +42,11 @@
         </select>
 
         <label>طريقة اللقاء المفضلة:</label>
-        <select name="meeting_method" required>
+        <select name="method" required>
           <option value="">اختر طريقة اللقاء</option>
           <option value="Microsoft Teams">Microsoft Teams</option>
           <option value="Zoom">Zoom</option>
+          <option value="Chat عبر الموقع">Chat عبر الموقع</option>
         </select>
 
         <label>التاريخ والوقت المفضل:</label>
@@ -66,75 +56,45 @@
         <textarea name="message" rows="4" placeholder="اكتب أي تفاصيل إضافية..."></textarea>
 
         <button type="submit" class="btn">إرسال الطلب</button>
+        <p id="formStatus" style="margin-top:15px; text-align:center; color:#d4af37;"></p>
       </form>
-
-      <p id="responseMessage"></p>
     </div>
   </section>
 
   <script>
-  // التقاط اسم الباقة من الرابط وملؤها تلقائياً
-  const params = new URLSearchParams(window.location.search);
-  const selectedPackage = params.get('package');
-  if (selectedPackage) {
-    const selectElement = document.querySelector('select[name="package"]');
-    if (selectElement) selectElement.value = selectedPackage;
-  }
-  const form = document.getElementById('bookingForm');
-  const responseMessage = document.getElementById('responseMessage');
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(form);
-    const meetingMethod = formData.get('meeting_method');
-    const response = await fetch('send_booking.php', { method: 'POST', body: formData });
-    const result = await response.text();
-
-    responseMessage.innerHTML = result;
-
-    // ✅ إظهار زر الواتساب فقط إذا كانت الطريقة "Chat عبر الموقع"
-    if (meetingMethod === "Chat عبر الموقع") {
-      const whatsappDiv = document.createElement("div");
-      whatsappDiv.innerHTML = `
-        <a href="https://wa.me/962775415550X?text=مرحباً، أود المتابعة في المحادثة عبر الموقع." 
-           class="whatsapp-chat" target="_blank" title="تواصل عبر WhatsApp">
-           <i class="fab fa-whatsapp"></i>
-        </a>
-      `;
-      document.body.appendChild(whatsappDiv);
+    // التقاط اسم الباقة من الرابط وملؤها تلقائياً
+    const params = new URLSearchParams(window.location.search);
+    const selectedPackage = params.get('package');
+    if (selectedPackage) {
+      const selectElement = document.querySelector('select[name="package"]');
+      if (selectElement) selectElement.value = selectedPackage;
     }
 
-    form.reset();
-  });
-</script>
+    // إرسال النموذج إلى Formspree وإظهار رسالة بالعربية
+    const form = document.getElementById("bookingForm");
+    const status = document.getElementById("formStatus");
 
-<style>
-.whatsapp-chat {
-  position: fixed;
-  bottom: 25px;
-  left: 25px;
-  background: linear-gradient(135deg, #25D366, #128C7E);
-  color: white;
-  font-size: 28px;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  text-decoration: none;
-  z-index: 999;
-  transition: 0.3s ease;
-}
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      status.textContent = "جارٍ إرسال طلبك... ⏳";
 
-.whatsapp-chat:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 20px rgba(37, 211, 102, 0.6);
-}
-</style>
+      try {
+        const response = await fetch(form.action, {
+          method: form.method,
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
 
-</script>
+        if (response.ok) {
+          status.innerHTML = "✅ تم إرسال طلبك بنجاح! سنعاود التواصل معك قريبًا.";
+          form.reset();
+        } else {
+          status.innerHTML = "⚠️ حدث خطأ أثناء الإرسال، يرجى المحاولة لاحقًا.";
+        }
+      } catch (error) {
+        status.innerHTML = "❌ لم يتم الاتصال بالخادم. تحقق من اتصال الإنترنت.";
+      }
+    });
+  </script>
 </body>
 </html>
